@@ -1,5 +1,5 @@
-A Javascript-based SQL IDE and tutorial
-=======================================
+Javascript-based SQL(ite3) IDE and tutorial
+-------------------------------------------
 
 This is nothing fancy, just a wrapper on sql.js (https://github.com/kripken/sql.js/).
 

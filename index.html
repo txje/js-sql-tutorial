@@ -8,6 +8,18 @@
       font-family: courier;
       height: 100%;
     }
+    .content {
+      display: none;
+      height: 100%;
+    }
+    .tab {
+      border: 1px solid #000000;
+      border-radius: 5px;
+      display: inline-block;
+      padding: 20px;
+      cursor: pointer;
+    }
+
   </style>
   <script src="sql.js"></script>
   <script>
@@ -45,30 +57,81 @@
 
     function run() {
       var command = document.getElementById('input').value;
-      console.log(command);
       execute(command);
+    }
+
+    function swap(tab) {
+      var content = document.getElementById("content");
+      if(tab == "install") {
+        document.getElementById("install").style.display = "block";
+        document.getElementById("engine").style.display = "none";
+      }
+      else {
+        document.getElementById("engine").style.display = "block";
+        document.getElementById("install").style.display = "none";
+        loadSql(tab);
+      }
     }
   </script>
 </head>
 <body onload="loadSql('tutorial0.sql')">
-  <table style="width:100%; height:100%;">
-    <tr style="height:1px"><td colspan=2>
-      <h2>
-        SQL(ite3) JS Engine
-      </h2>
-      <a href="http://www.sqlite.org/download.html">Download</a> - choose the first download under the heading "Precompiled Binaries for (Mac OS X/Windows/Linux)"
-      <br/>
-      Then just click it or open a Terminal or Command Line and enter "sqlite3" (OS X/Linux) or "sqlite3.exe" (Windows)
+  <table style="width:100%; height:100%">
+    <tr style="height:1px;"><td>
+      <h2>SQL Tutorial</h2>
     </td></tr>
-    <tr style="height:1px"><td>
-      <input type="button" value="Run" onclick="run()"/>
-    </td><td>
-      Output:
+    <tr style="height:1px;"><td>
+      <div class="tab" onclick="swap('install')">Install</div>
+      <div class="tab" onclick="swap('tutorial0.sql')">Introduction</div>
+      <div class="tab" onclick="swap('tutorial1.sql')">Tables</div>
+      <div class="tab" onclick="swap('tutorial2.sql')">Queries</div>
+      <div class="tab" onclick="swap('tutorial3.sql')">Advanced</div>
     </td></tr>
-    <tr><td style="width:45%">
-      <textarea id="input" style="width:100%; height:100%;"></textarea>
-    </td><td style="width:50%">
-      <div id="output" style="margin-left:10px; margin-top: 10px; display:inline-block; width:100%; height:100%;"></div>
+    <tr><td id="content" style="padding-top: 20px;">
+
+      <div class="content" id="install">
+        <h3>Step 1</h3>
+        <a href="http://www.sqlite.org/download.html">Download</a> it.
+        <br/>
+        <br/>
+        There are a few choices. Fear not. Choose the first download under the heading "Precompiled Binaries for (Mac OS X/Windows/Linux)"
+        <br/>
+        <br/>
+        <h3>Step 2</h3>
+        Just extract then double-click it
+        <br/>
+        -- or --
+        <br/>
+        Open a Terminal or Command Line and enter "sqlite3" (OS X/Linux) or "sqlite3.exe" (Windows)
+        <br/>
+        <br/>
+        <h3>Done!</h3>
+        You should have a terminal with a prompt like so:
+        <br/>
+        <div style="background-color: black; color: #00FF00; padding: 10px; margin-top: 10px; width:50%;">
+          sqlite&gt;
+        </div>
+      </div>
+
+      <div class="content" id="engine">
+        <table style="width:100%; height:100%;">
+          <tr style="height:1px"><td colspan=2>
+            <h3>
+              SQLite[3] JS Engine
+            </h3>
+          </td></tr>
+          <tr style="height:1px"><td>
+            <input type="button" value="Run" onclick="run()"/>
+          </td><td>
+            Output:
+          </td></tr>
+          <tr><td style="width:45%">
+            <textarea id="input" style="width:100%; height:100%;"></textarea>
+          </td><td style="width:50%">
+            <div id="output" style="margin-left:10px; margin-top: 10px; display:inline-block; width:100%; height:100%;"></div>
+          </td></tr>
+        </table>
+      </div>
+
     </td></tr>
   </table>
 </body>
