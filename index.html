@@ -11,18 +11,43 @@
     .content {
       display: none;
       height: 100%;
+      padding-top: 0px;
     }
     .tab {
       border: 1px solid #000000;
       border-radius: 5px;
       display: inline-block;
-      padding: 20px;
+      font-weight: normal;
+      font-size: 14pt;
+      padding: 5px;
       cursor: pointer;
     }
 
   </style>
   <script src="sql.js"></script>
   <script>
+    function loadDb(fname) {
+      var xmlhttp;
+      xmlhttp = new XMLHttpRequest(); // IE7+, Firefox, Chrome, Opera, Safari
+      xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          db = SQL.open(bin2Array(xmlhttp.responseText));
+        }
+      }
+      xmlhttp.open("GET", fname, true);
+      xmlhttp.overrideMimeType('text/plain; charset=x-user-defined');
+      xmlhttp.send();
+    }
+
+    function bin2Array(bin) {
+        'use strict';
+        var i, size = bin.length, ary = [];
+        for (i = 0; i < size; i++) {
+            ary.push(bin.charCodeAt(i) & 0xFF);
+        }
+        return ary;
+    }
+
     function loadSql(fname) {
       var xmlhttp;
       xmlhttp = new XMLHttpRequest(); // IE7+, Firefox, Chrome, Opera, Safari
@@ -43,13 +68,43 @@
 
     // Open a database
     var db = SQL.open();
+    loadDb("workshop.db");
 
     // Run a command in the database
     function execute(commands) {
       try {
         //var data = db.exec(commands.replace(/\n/g, '; '));
         var data = db.exec(commands);
-        print(JSON.stringify(data, null, '  '));
+        //print(JSON.stringify(data, null, '  '));
+        print(data.length + " rows.");
+        if(data.length > 0) {
+          var table = document.createElement("TABLE");
+          table.setAttribute("cellspacing", 0);
+          table.setAttribute("cellpadding", 0);
+          var cols = data[0].length;
+          for(var d = 0; d < data.length; d++) {
+            if(d == 0) { // header
+              var header = table.createTHead();
+              var row = header.insertRow(0);
+              for(var i = 0; i < data[d].length; i++) {
+                var cell = row.insertCell(i);
+                cell.innerHTML = "<b>" + data[d][i]["column"] + "</b>";
+                cell.style.border = "1px solid #000000";
+                cell.style.padding = "3px";
+              }
+            }
+            var row = table.insertRow(d+1);
+            for(var i = 0; i < data[d].length; i++) {
+              var cell = row.insertCell(i);
+              cell.textContent = data[d][i]["value"];
+              cell.style.border = "1px solid #000000";
+              cell.style.padding = "3px";
+            }
+          }
+        }
+        var element = document.getElementById('output');
+        element.appendChild(table);
+
       } catch(e) {
         print(e);
       }
@@ -77,18 +132,14 @@
 <body onload="loadSql('tutorial0.sql')">
   <table style="width:100%; height:100%">
     <tr style="height:1px;"><td>
-      <h2>SQL Tutorial</h2>
+      <h2 style="padding: 5px">
+        SQL Tutorial
+        <div class="tab" onclick="swap('install')">Install</div>
+        <div class="tab" onclick="swap('tutorial0.sql')">Console</div>
+      </h2>
     </td></tr>
-    <tr style="height:1px;"><td>
-      <div class="tab" onclick="swap('install')">Install</div>
-      <div class="tab" onclick="swap('tutorial0.sql')">Introduction</div>
-      <div class="tab" onclick="swap('tutorial1.sql')">Tables</div>
-      <div class="tab" onclick="swap('tutorial2.sql')">Queries</div>
-      <div class="tab" onclick="swap('tutorial3.sql')">Advanced</div>
-    </td></tr>
-    <tr><td id="content" style="padding-top: 20px;">
-
-      <div class="content" id="install">
+    <tr><td id="content">
+      <div class="content" style="display:block" id="install">
         <h3>Step 1</h3>
         <a href="http://www.sqlite.org/download.html">Download</a> it.
         <br/>
